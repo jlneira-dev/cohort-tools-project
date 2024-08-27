@@ -8,7 +8,7 @@ const PORT = 5005;
 
 // MONGOOSE
 mongoose
-  .connect("mongodb:localhost:27017/cohorts-tools-api")
+  .connect("mongodb://localhost:27017/cohort-tools-api")
   .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
   .catch(err => console.error("Error connecting to MongoDB", err));
 
