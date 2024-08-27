@@ -2,13 +2,48 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema
 const PORT = 5005;
 
-// STATIC DATA
-// Devs Team - Import the provided files with JSON data of students and cohorts here:
+// MONGOOSE
+mongoose
+  .connect("mongodb:localhost:27017/cohorts-tools-api")
+  .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
+  .catch(err => console.error("Error connecting to MongoDB", err));
 
-const cohorts = require("./cohorts.json");
-const students = require("./students.json");
+
+const cohortsSchema = new Schema ({
+  "inProgress": Boolean,
+  "cohortSlug": String,
+  "cohortName": String,
+  "program": String,
+  "campus": String,
+  "startDate": Date,
+  "endDate": Date,
+  "programManager": String,
+  "leadTeacher": String,
+  "totalHours": Number
+})
+
+const Cohort = mongoose.model("Cohort", cohortsSchema);
+
+const studentsSchema = new Schema ({
+  "firstName": String,
+  "lastName": String,
+  "email": String,
+  "phone": String,
+  "linkedinUrl": String,
+  "languages": Array,
+  "program": String,
+  "background": String,
+  "image": String,
+  "projects": Array,
+  "cohort": {type: mongoose.Schema.Types.ObjectId,
+  ref: "Cohort"}
+})
+
+const Student = mongoose.model("Student", studentsSchema)
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -37,11 +72,27 @@ app.get("/docs", (req, res) => {
 });
 
 app.get("/api/cohorts", (req, res) => {
-  res.json(cohorts);
+  Cohort.find({})
+    .then((cohorts) => {
+      console.log("Retrieved cohorts ->", cohorts);
+      res.json(cohorts);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving cohorts ->", error);
+      res.status(500).json({ error: "Failed to retrieve cohorts" });
+    });
 });
 
 app.get("/api/students", (req, res) => {
-  res.json(students);
+  Student.find({})
+    .then((students) => {
+      console.log("Retrieved cohorts ->", students);
+      res.json(students);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving students ->", error);
+      res.status(500).json({ error: "Failed to retrieve students" });
+    });
 });
 
 // START SERVER
