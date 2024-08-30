@@ -3,9 +3,10 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const { errorHandler, notFoundHandler } = require('./middleware/error-handling');
+const { errorHandler, notFoundHandler } = require('./middleware/error-handling.js');
 const cohortRouter = require("./routes/cohorts.routes")
 const studentRouter = require("./routes/students.routes")
+const authRouter = require("./routes/auth.routes"); 
 const PORT = 5005;
 
 // MONGOOSE
@@ -20,6 +21,7 @@ const app = express();
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
+require('dotenv').config()
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static("public"));
@@ -42,6 +44,7 @@ app.get("/docs", (req, res, next) => {
 
 app.use('/api', cohortRouter);
 app.use('/api', studentRouter);
+app.use("/auth", authRouter);
 
 // ERROR HANDLING
 app.use(notFoundHandler);
