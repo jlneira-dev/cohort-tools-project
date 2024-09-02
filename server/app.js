@@ -7,6 +7,7 @@ const { errorHandler, notFoundHandler } = require('./middleware/error-handling.j
 const cohortRouter = require("./routes/cohorts.routes")
 const studentRouter = require("./routes/students.routes")
 const authRouter = require("./routes/auth.routes"); 
+const userRouter = require("./routes/user.routes.js")
 const PORT = 5005;
 
 // MONGOOSE
@@ -44,6 +45,7 @@ app.get("/docs", (req, res, next) => {
 
 app.use('/api', cohortRouter);
 app.use('/api', studentRouter);
+app.use("/api", userRouter)
 app.use("/auth", authRouter);
 
 // ERROR HANDLING
